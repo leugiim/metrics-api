@@ -1,18 +1,21 @@
 import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
-import { Request } from "express";
+import { Request, Response } from "express";
 
 import { User } from "./Users/Domain/User";
-import { UserRepository } from "./Users/Domain/UserRepository";
 import { UserFirebaseRepository } from "./Users/Infrastructure/UserFirebaseRepository";
 import { UserService } from "./Users/Application/UserService";
+import { ResponseApi } from "./model/ResponseApi";
 
 const userService: UserService = new UserService(new UserFirebaseRepository());
 
 // Configurar la estrategia de autenticación local
 passport.use(
   new LocalStrategy(
-    { usernameField: "username" },
+    {
+      usernameField: "username",
+      passwordField: "password",
+    },
     async (username, password, done) => {
       try {
         // Buscar el usuario en la base de datos
@@ -48,6 +51,36 @@ passport.deserializeUser(async (id: string, done) => {
   }
 });
 
+// Controlador de inicio de sesión
+export const loginAuth = (req: Request, res: Response) => {
+  // Autenticar al usuario usando Passport
+  passport.authenticate("local", (err, user, info) => {
+    if (err) {
+      // Si ocurre un error durante la autenticación, enviar una respuesta de error
+      const response = new ResponseApi();
+      response.setError("Error de autenticación", 500);
+      return res.status(response.httpStatus).json(response);
+    }
+
+    if (!user) {
+      // Si las credenciales del usuario no son correctas, enviar una respuesta de error
+      const response = new ResponseApi();
+      response.setError("Email o contraseña incorrectos", 401);
+      return res.status(response.httpStatus).json(response);
+    }
+
+    // Si el usuario ha sido autenticado correctamente, iniciar sesión y enviar una respuesta con el usuario autenticado
+    req.logIn(user, (err) => {
+      if (err) {
+        const response = new ResponseApi();
+        response.setError("Error de autenticación", 500);
+        return res.status(response.httpStatus).json(response);
+      }
+      return res.json({ user });
+    });
+  })(req, res);
+};
+
 // Función de middleware para proteger rutas que requieren autenticación
 export function ensureAuthenticated(
   req: Request,
@@ -57,6 +90,7 @@ export function ensureAuthenticated(
   if (req.isAuthenticated()) {
     return next();
   }
-
-  throw new Error("No autorizado");
+  const response = new ResponseApi();
+  response.setError("No autorizado", 401);
+  return res.status(response.httpStatus).json(response);
 }

@@ -13,7 +13,7 @@ export class ResponseApi<T> {
   setError(ex, httpStatus = 500) {
     this.status = "ERROR";
     this.httpStatus = httpStatus;
-    this.message = ex.message ? ex.message : "";
+    this.message = ex?.message ?? ex ?? "";
     this.content = null;
   }
 }

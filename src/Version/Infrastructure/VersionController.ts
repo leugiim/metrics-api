@@ -1,31 +1,35 @@
-import express from "express";
+import { Router, Request, Response } from "express";
 import { ResponseApi } from "../../model/ResponseApi";
 import { title, version } from "../Domain/Version";
 
-const router = express.Router();
+export class VersionController {
+  public router = Router();
 
-/**
- * @swagger
- * /version:
- *   get:
- *     summary: Obtiene la versión de la api
- *     description: Obtiene la versión de la api
- *     tags:
- *      - version
- *     responses:
- *       '200':
- *         description: OK
- */
-router.get("/", (req, res) => {
-  const response = new ResponseApi();
-
-  try {
-    response.content = { title, version };
-  } catch (ex) {
-    response.setError(ex);
+  constructor() {
+    this.router.get("/", this.getVersion.bind(this));
   }
 
-  res.status(response.httpStatus).json(response);
-});
+  /**
+   * @swagger
+   * /version:
+   *   get:
+   *     summary: Obtiene la versión de la api
+   *     description: Obtiene la versión de la api
+   *     tags:
+   *      - version
+   *     responses:
+   *       '200':
+   *         description: OK
+   */
+  getVersion = async (req: Request, res: Response) => {
+    const response = new ResponseApi();
 
-export default router;
+    try {
+      response.content = { title, version };
+    } catch (ex) {
+      response.setError(ex);
+    }
+
+    res.status(response.httpStatus).json(response);
+  };
+}
