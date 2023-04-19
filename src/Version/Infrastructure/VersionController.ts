@@ -1,10 +1,8 @@
 import express from "express";
-import { ResponseApi } from "../model/ResponseApi";
+import { ResponseApi } from "../../model/ResponseApi";
+import { title, version } from "../Domain/Version";
 
 const router = express.Router();
-
-export const title = "Factorial metrics API";
-export const version = "1.0.0";
 
 /**
  * @swagger
