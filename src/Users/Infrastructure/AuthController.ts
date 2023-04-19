@@ -9,24 +9,38 @@ export class AuthController {
   public router = Router();
 
   constructor(private userService: UserService) {
-    this.router.post(
-      "/",
-      loginAuth,
-      this.login.bind(this)
-    );
+    this.router.post("/", loginAuth, this.login.bind(this));
   }
 
   /**
    * @swagger
    * /auth:
    *   post:
-   *     summary: Obtiene la versión de la api
-   *     description: Obtiene la versión de la api
+   *     summary: Login
+   *     description: Login de usuario con username y password en el body
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/x-www-form-urlencoded:
+   *           schema:
+   *             type: object
+   *             properties:
+   *               username:
+   *                 type: string
+   *               password:
+   *                 type: string
+   *             required:
+   *               - username
+   *               - password
    *     tags:
    *      - auth
    *     responses:
    *       '200':
    *         description: OK
+   *       '401':
+   *         description: Unauthorized
+   *       '500':
+   *         description: Internal Server Error
    */
   login = async (req: Request, res: Response) => {
     const response = new ResponseApi<User>();
