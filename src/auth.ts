@@ -5,7 +5,7 @@ import { Request, Response } from "express";
 import { User } from "./Users/Domain/User";
 import { UserFirebaseRepository } from "./Users/Infrastructure/UserFirebaseRepository";
 import { UserService } from "./Users/Application/UserService";
-import { ResponseApi } from "./model/ResponseApi";
+import { ResponseApi } from "./_Shared/Domain/ResponseApi";
 
 const userService: UserService = new UserService(new UserFirebaseRepository());
 

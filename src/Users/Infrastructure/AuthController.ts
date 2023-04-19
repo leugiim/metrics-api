@@ -1,6 +1,6 @@
 import passport from "passport";
 import { Router, Request, Response } from "express";
-import { ResponseApi } from "../../model/ResponseApi";
+import { ResponseApi } from "../../_Shared/Domain/ResponseApi";
 import type { User } from "../Domain/User";
 import { UserService } from "../Application/UserService";
 import { loginAuth } from "../../auth";

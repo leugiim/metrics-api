@@ -1,5 +1,5 @@
 import { Router, Request, Response } from "express";
-import { ResponseApi } from "../../model/ResponseApi";
+import { ResponseApi } from "../../_Shared/Domain/ResponseApi";
 import { title, version } from "../Domain/Version";
 
 export class VersionController {
