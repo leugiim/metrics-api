@@ -3,7 +3,7 @@ import { Router, Request, Response } from "express";
 import { ResponseApi } from "../../_Shared/Domain/ResponseApi";
 import type { User } from "../Domain/User";
 import { UserService } from "../Application/UserService";
-import { loginAuth } from "../../auth";
+import { loginAuth } from "../../_Shared/Infrastructure/Auth";
 
 export class AuthController {
   public router = Router();

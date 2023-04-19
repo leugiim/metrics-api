@@ -4,12 +4,12 @@ import passport from "passport";
 import session from "express-session";
 import dotenv from "dotenv";
 import bodyParser from "body-parser";
-import { useSwagger } from "./swagger";
 import { AuthController } from "./Users/Infrastructure/AuthController";
 import { VersionController } from "./Version/Infrastructure/VersionController";
 import { UserService } from "./Users/Application/UserService";
 import { UserFirebaseRepository } from "./Users/Infrastructure/UserFirebaseRepository";
-import "./auth";
+import "./_Shared/Infrastructure/Auth";
+import { useSwagger } from "./_Shared/Infrastructure/swagger";
 
 const app = express();
 dotenv.config();

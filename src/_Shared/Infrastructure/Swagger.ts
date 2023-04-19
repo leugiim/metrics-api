@@ -1,7 +1,7 @@
 import express from "express";
 import swaggerUi from "swagger-ui-express";
 import swaggerJsdoc from "swagger-jsdoc";
-import { title, version } from "./Version/Domain/Version";
+import { title, version } from "../../Version/Domain/Version";
 
 export const useSwagger = () => {
   const router = express.Router();

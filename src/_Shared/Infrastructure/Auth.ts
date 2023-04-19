@@ -2,10 +2,10 @@ import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
 import { Request, Response } from "express";
 
-import { User } from "./Users/Domain/User";
-import { UserFirebaseRepository } from "./Users/Infrastructure/UserFirebaseRepository";
-import { UserService } from "./Users/Application/UserService";
-import { ResponseApi } from "./_Shared/Domain/ResponseApi";
+import { User } from "../../Users/Domain/User";
+import { UserFirebaseRepository } from "../../Users/Infrastructure/UserFirebaseRepository";
+import { UserService } from "../../Users/Application/UserService";
+import { ResponseApi } from "../Domain/ResponseApi";
 
 const userService: UserService = new UserService(new UserFirebaseRepository());
 
