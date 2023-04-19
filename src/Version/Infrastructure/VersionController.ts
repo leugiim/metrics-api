@@ -25,11 +25,11 @@ export class VersionController {
     const response = new ResponseApi();
 
     try {
-      response.content = { title, version };
+      response.setContent({ title, version });
     } catch (ex) {
       response.setError(ex);
     }
 
-    res.status(response.httpStatus).json(response);
+    res.status(response.getHttpStatus()).json(response);
   };
 }

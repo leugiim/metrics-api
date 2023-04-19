@@ -46,11 +46,11 @@ export class AuthController {
     const response = new ResponseApi<User>();
 
     try {
-      response.content = req.user as User;
+      response.setContent(req.user as User);
     } catch (ex) {
       response.setError(ex);
     }
 
-    res.status(response.httpStatus).json(response);
+    res.status(response.getHttpStatus()).json(response);
   };
 }

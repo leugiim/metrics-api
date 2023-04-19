@@ -1,13 +1,21 @@
 export class ResponseApi<T> {
-  status: string;
-  httpStatus: number;
-  message?: string;
-  content: T;
+  private status: string;
+  private httpStatus: number;
+  private message?: string;
+  private content: T;
 
   constructor() {
     this.status = "SUCCESS";
     this.httpStatus = 200;
     this.content = null;
+  }
+
+  getHttpStatus() {
+    return this.httpStatus;
+  }
+
+  setContent(content: T) {
+    this.content = content;
   }
 
   setError(ex, httpStatus = 500) {

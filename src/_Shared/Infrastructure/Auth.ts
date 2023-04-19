@@ -39,12 +39,12 @@ passport.use(
 
 // Serializar y deserializar el usuario
 passport.serializeUser((user: User, done) => {
-  done(null, user.id);
+  done(null, user.username);
 });
 
 passport.deserializeUser(async (id: string, done) => {
   try {
-    const user: User = await userService.findById(id);
+    const user: User = await userService.findByUsername(id);
     done(null, user);
   } catch (error) {
     done(error);
@@ -59,14 +59,14 @@ export const loginAuth = (req: Request, res: Response) => {
       // Si ocurre un error durante la autenticación, enviar una respuesta de error
       const response = new ResponseApi();
       response.setError("Error de autenticación", 500);
-      return res.status(response.httpStatus).json(response);
+      return res.status(response.getHttpStatus()).json(response);
     }
 
     if (!user) {
       // Si las credenciales del usuario no son correctas, enviar una respuesta de error
       const response = new ResponseApi();
       response.setError("Email o contraseña incorrectos", 401);
-      return res.status(response.httpStatus).json(response);
+      return res.status(response.getHttpStatus()).json(response);
     }
 
     // Si el usuario ha sido autenticado correctamente, iniciar sesión y enviar una respuesta con el usuario autenticado
@@ -74,9 +74,11 @@ export const loginAuth = (req: Request, res: Response) => {
       if (err) {
         const response = new ResponseApi();
         response.setError("Error de autenticación", 500);
-        return res.status(response.httpStatus).json(response);
+        return res.status(response.getHttpStatus()).json(response);
       }
-      return res.json({ user });
+      const response = new ResponseApi<User>();
+      response.setContent(user);
+      return res.json(response);
     });
   })(req, res);
 };
@@ -92,5 +94,5 @@ export function ensureAuthenticated(
   }
   const response = new ResponseApi();
   response.setError("No autorizado", 401);
-  return res.status(response.httpStatus).json(response);
+  return res.status(response.getHttpStatus()).json(response);
 }

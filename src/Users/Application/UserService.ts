@@ -12,10 +12,13 @@ export class UserService {
     if (!user) return null;
     if (user.password !== password) return null;
 
+    delete user.password;
     return user;
   }
 
-  async findById(id: string): Promise<User | null> {
-    return await this.userRepository.findById(id);
+  async findByUsername(username: string): Promise<User | null> {
+    const user = await this.userRepository.findByUsername(username);
+    delete user.password;
+    return user;
   }
 }
