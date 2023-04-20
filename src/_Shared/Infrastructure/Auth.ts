@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
 import dotenv from "dotenv";
 
-import { User } from "../../Users/Domain/User";
+import { Permission, User } from "../../Users/Domain/User";
 import { ResponseApi } from "../Domain/ResponseApi";
 import { userService } from "../Infrastructure/DependencyInjection";
 
@@ -16,7 +16,6 @@ declare global {
     }
   }
 }
-
 
 const responseError = (res: Response) => {
   const response = new ResponseApi();
@@ -51,11 +50,7 @@ export const loginAuth = async (req: Request, res: Response) => {
 };
 
 // Middleware to check if user is authenticated
-export const ensureAuthenticated = (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const isLoged = (req: Request, res: Response, next: NextFunction) => {
   const token = req.headers.authorization?.split(" ")[1];
 
   if (!token) return responseUnauthorized(res);
@@ -67,4 +62,27 @@ export const ensureAuthenticated = (
   } catch (error) {
     return responseUnauthorized(res, "Invalid token");
   }
+};
+
+// Middleware to check if user have permission
+export const haveRole =
+  (permission: Permission) =>
+  (req: Request, res: Response, next: NextFunction) => {
+    if (!req.user?.roles[permission])
+      return responseUnauthorized(res, "You can not access to this resource");
+
+    next();
+  };
+
+// Middleware to check if user have permission to access to company
+export const haveCompanyPermission = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  let companyName = req.params.name;
+  if (!req.user?.companiesPermissions.includes(companyName))
+    return responseUnauthorized(res, "You can not access to this company");
+
+  next();
 };

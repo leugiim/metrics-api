@@ -10,7 +10,6 @@ export class UserFirebaseRepository implements UserRepository {
   private usersCollection = collection(this.firestore, "users");
 
   async findByUsername(username: string): Promise<User | null> {
-    // Implementar el método findByUsername
     const queryResult = doc(this.usersCollection, username);
     const userDoc = await getDoc(queryResult);
 

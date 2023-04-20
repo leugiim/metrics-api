@@ -2,7 +2,7 @@ export class ResponseApi<T> {
   private status: string;
   private httpStatus: number;
   private message?: string;
-  private content: T;
+  private content: T | null;
 
   constructor() {
     this.status = "SUCCESS";
@@ -14,7 +14,7 @@ export class ResponseApi<T> {
     return this.httpStatus;
   }
 
-  setContent(content: T) {
+  setContent(content: T | null) {
     this.content = content;
   }
 
