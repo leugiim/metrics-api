@@ -16,7 +16,7 @@ export class AuthController {
    * /auth:
    *   post:
    *     summary: Login
-   *     description: Login de usuario con username y password en el body
+   *     description: Login user by username and password
    *     requestBody:
    *       required: true
    *       content:
@@ -50,6 +50,6 @@ export class AuthController {
       response.setError(ex);
     }
 
-    res.status(response.getHttpStatus()).json(response);
+    return res.status(response.getHttpStatus()).json(response);
   };
 }

@@ -12,7 +12,7 @@ export const JWT_SECRET = process.env.JWT_SECRET;
 declare global {
   namespace Express {
     interface Request {
-      user?: User; // extiende la interfaz Request con la propiedad user
+      user?: User;
     }
   }
 }

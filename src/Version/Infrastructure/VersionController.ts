@@ -13,8 +13,8 @@ export class VersionController {
    * @swagger
    * /version:
    *   get:
-   *     summary: Obtiene la versión de la api
-   *     description: Obtiene la versión de la api
+   *     summary: Get API version
+   *     description: Get API information
    *     tags:
    *      - version
    *     responses:
