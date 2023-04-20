@@ -6,6 +6,8 @@ import bodyParser from "body-parser";
 import { useSwagger } from "./_Shared/Infrastructure/Swagger";
 import {
   authController,
+  companyController,
+  userController,
   versionController,
 } from "./_Shared/Infrastructure/DependencyInjection";
 import { JWT_SECRET } from "./_Shared/Infrastructure/Auth";
@@ -30,6 +32,8 @@ app.use(bodyParser.json());
 
 // Config routes
 app.use("/auth", authController.router);
+app.use("/user", userController.router);
+app.use("/company", companyController.router);
 app.use("/version", versionController.router);
 
 app.listen(process.env.PORT ?? 3000, () => {
