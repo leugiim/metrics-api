@@ -15,9 +15,11 @@ export const useSwagger = () => {
           url: `${process.env.URL}:${process.env.PORT}`,
         },
       ],
-      security: [{
-        bearerAuth: [],
-      }],
+      security: [
+        {
+          bearerAuth: [],
+        },
+      ],
       components: {
         securitySchemes: {
           bearerAuth: {
@@ -26,7 +28,7 @@ export const useSwagger = () => {
             bearerFormat: "JWT",
           },
         },
-      }
+      },
     },
     apis: ["./src/**/Infrastructure/*Controller.ts"],
   };

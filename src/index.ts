@@ -36,8 +36,10 @@ app.use("/user", userController.router);
 app.use("/company", companyController.router);
 app.use("/version", versionController.router);
 
-app.listen(process.env.PORT ?? 3000, () => {
+export const server = app.listen(process.env.PORT ?? 3000, () => {
   console.log(
     `La aplicación está corriendo en el puerto ${process.env.PORT ?? 3000}.`
   );
 });
+
+export default app;

@@ -1,4 +1,4 @@
-import { User } from "../Domain/User";
+import { Permission, User } from "../Domain/User";
 import { UserRepository } from "../Domain/UserRepository";
 
 export class UserService {
@@ -18,7 +18,15 @@ export class UserService {
 
   async findByUsername(username: string): Promise<User | null> {
     const user = await this.userRepository.findByUsername(username);
-    delete user.password;
+    if(user) delete user.password;
     return user;
+  }
+
+  haveRolePermission(user: User, permission: Permission): boolean {
+    return !user.roles[permission];
+  }
+
+  haveCompanyPermission(user: User, companyName: string): boolean {
+    return !user.companiesPermissions.includes(companyName);
   }
 }
