@@ -1,98 +1,70 @@
-import passport from "passport";
-import { Strategy as LocalStrategy } from "passport-local";
-import { Request, Response } from "express";
+import jwt from "jsonwebtoken";
+import { Request, Response, NextFunction } from "express";
+import dotenv from "dotenv";
 
 import { User } from "../../Users/Domain/User";
-import { UserFirebaseRepository } from "../../Users/Infrastructure/UserFirebaseRepository";
-import { UserService } from "../../Users/Application/UserService";
 import { ResponseApi } from "../Domain/ResponseApi";
+import { userService } from "../Infrastructure/DependencyInjection";
 
-const userService: UserService = new UserService(new UserFirebaseRepository());
+dotenv.config();
+export const JWT_SECRET = process.env.JWT_SECRET;
 
-// Configurar la estrategia de autenticación local
-passport.use(
-  new LocalStrategy(
-    {
-      usernameField: "username",
-      passwordField: "password",
-    },
-    async (username, password, done) => {
-      try {
-        // Buscar el usuario en la base de datos
-        const user: User = await userService.login(username, password);
-
-        // Si no se encuentra el usuario, mostrar un mensaje de error
-        if (!user) {
-          return done(null, false, {
-            message: "Email o contraseña incorrectos",
-          });
-        }
-
-        // Si la autenticación es exitosa, devolver el usuario
-        return done(null, user);
-      } catch (error) {
-        return done(error);
-      }
+declare global {
+  namespace Express {
+    interface Request {
+      user?: User; // extiende la interfaz Request con la propiedad user
     }
-  )
-);
-
-// Serializar y deserializar el usuario
-passport.serializeUser((user: User, done) => {
-  done(null, user.username);
-});
-
-passport.deserializeUser(async (id: string, done) => {
-  try {
-    const user: User = await userService.findByUsername(id);
-    done(null, user);
-  } catch (error) {
-    done(error);
   }
-});
+}
 
-// Controlador de inicio de sesión
-export const loginAuth = (req: Request, res: Response) => {
-  // Autenticar al usuario usando Passport
-  passport.authenticate("local", (err, user, info) => {
-    if (err) {
-      // Si ocurre un error durante la autenticación, enviar una respuesta de error
-      const response = new ResponseApi();
-      response.setError("Error de autenticación", 500);
-      return res.status(response.getHttpStatus()).json(response);
-    }
 
-    if (!user) {
-      // Si las credenciales del usuario no son correctas, enviar una respuesta de error
-      const response = new ResponseApi();
-      response.setError("Email o contraseña incorrectos", 401);
-      return res.status(response.getHttpStatus()).json(response);
-    }
-
-    // Si el usuario ha sido autenticado correctamente, iniciar sesión y enviar una respuesta con el usuario autenticado
-    req.logIn(user, (err) => {
-      if (err) {
-        const response = new ResponseApi();
-        response.setError("Error de autenticación", 500);
-        return res.status(response.getHttpStatus()).json(response);
-      }
-      const response = new ResponseApi<User>();
-      response.setContent(user);
-      return res.json(response);
-    });
-  })(req, res);
+const responseError = (res: Response) => {
+  const response = new ResponseApi();
+  response.setError("Authentication error", 500);
+  return res.status(response.getHttpStatus()).json(response);
+};
+const responseUnauthorized = (res: Response, message: string = null) => {
+  const response = new ResponseApi();
+  response.setError(message ?? "Unauthorized", 401);
+  return res.status(response.getHttpStatus()).json(response);
 };
 
-// Función de middleware para proteger rutas que requieren autenticación
-export function ensureAuthenticated(
+export const loginAuth = async (req: Request, res: Response) => {
+  try {
+    const { username, password } = req.body;
+    const user: User = await userService.login(username, password);
+
+    if (!user) {
+      const response = new ResponseApi();
+      response.setError("Wrong username or password", 401);
+      return res.status(response.getHttpStatus()).json(response);
+    }
+
+    const token = jwt.sign(user, JWT_SECRET, { expiresIn: "24h" });
+
+    const response = new ResponseApi();
+    response.setContent(token);
+    return res.status(response.getHttpStatus()).json(response);
+  } catch (error) {
+    return responseError(res);
+  }
+};
+
+// Middleware to check if user is authenticated
+export const ensureAuthenticated = (
   req: Request,
   res: Response,
-  next: Function
-) {
-  if (req.isAuthenticated()) {
-    return next();
+  next: NextFunction
+) => {
+  const token = req.headers.authorization?.split(" ")[1];
+
+  if (!token) return responseUnauthorized(res);
+
+  try {
+    const decodedToken = jwt.verify(token, JWT_SECRET) as User;
+    req.user = decodedToken;
+    next();
+  } catch (error) {
+    return responseUnauthorized(res, "Invalid token");
   }
-  const response = new ResponseApi();
-  response.setError("No autorizado", 401);
-  return res.status(response.getHttpStatus()).json(response);
-}
+};

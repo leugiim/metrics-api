@@ -1,15 +1,14 @@
 import express from "express";
 import cors from "cors";
-import passport from "passport";
 import session from "express-session";
 import dotenv from "dotenv";
 import bodyParser from "body-parser";
 import { useSwagger } from "./_Shared/Infrastructure/Swagger";
-import { AuthController } from "./Users/Infrastructure/AuthController";
-import { VersionController } from "./Version/Infrastructure/VersionController";
-import { UserService } from "./Users/Application/UserService";
-import { UserFirebaseRepository } from "./Users/Infrastructure/UserFirebaseRepository";
-import "./_Shared/Infrastructure/Auth";
+import {
+  authController,
+  versionController,
+} from "./_Shared/Infrastructure/DependencyInjection";
+import { JWT_SECRET } from "./_Shared/Infrastructure/Auth";
 
 const app = express();
 dotenv.config();
@@ -18,9 +17,9 @@ dotenv.config();
 app.use(cors());
 
 // Config auth
-app.use(session({ secret: "secret", resave: false, saveUninitialized: false }));
-app.use(passport.initialize());
-app.use(passport.session());
+app.use(
+  session({ secret: JWT_SECRET, resave: false, saveUninitialized: false })
+);
 
 // Config swagger
 app.use(useSwagger());
@@ -30,11 +29,8 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 // Config routes
-app.use(
-  "/auth",
-  new AuthController(new UserService(new UserFirebaseRepository())).router
-);
-app.use("/version", new VersionController().router);
+app.use("/auth", authController.router);
+app.use("/version", versionController.router);
 
 app.listen(process.env.PORT ?? 3000, () => {
   console.log(

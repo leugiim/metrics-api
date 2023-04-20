@@ -1,4 +1,3 @@
-import passport from "passport";
 import { Router, Request, Response } from "express";
 import { ResponseApi } from "../../_Shared/Domain/ResponseApi";
 import type { User } from "../Domain/User";
@@ -46,7 +45,7 @@ export class AuthController {
     const response = new ResponseApi<User>();
 
     try {
-      response.setContent(req.user as User);
+      response.setContent(req.user);
     } catch (ex) {
       response.setError(ex);
     }
