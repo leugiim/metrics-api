@@ -12,10 +12,13 @@ npm install
 
 ## Project Configuration
 
+In this case, because this is a project for an interview, I will remove from **.gitignore** the file **.env** but the right way is create it in local project.
+
 It is necessary to create a file called **.env** that contains the necessary configuration for the correct operation of the project. Below are the environment variables used:
 
 - **URL**
 - **PORT**
+- **JWT_SECRET**
 - **FIREBASE_API_KEY**
 - **FIREBASE_AUTH_DOMAIN**
 - **FIREBASE_PROJECT_ID**
