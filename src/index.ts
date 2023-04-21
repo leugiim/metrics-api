@@ -9,6 +9,7 @@ import {
   companyController,
   userController,
   versionController,
+  insertScriptController
 } from "./_Shared/Infrastructure/DependencyInjection";
 import { JWT_SECRET } from "./_Shared/Infrastructure/Auth";
 
@@ -35,6 +36,7 @@ app.use("/auth", authController.router);
 app.use("/user", userController.router);
 app.use("/company", companyController.router);
 app.use("/version", versionController.router);
+app.use("/script", insertScriptController.router);
 
 export const server = app.listen(process.env.PORT ?? 3000, () => {
   console.log(

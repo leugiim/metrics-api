@@ -17,7 +17,7 @@ export class UserFirebaseRepository implements UserRepository {
 
   async findByUsername(username: string): Promise<User | null> {
     const userId = username.toLowerCase();
-    
+
     const queryResult = doc(this.usersCollection, userId);
     const userDoc = await getDoc(queryResult);
 

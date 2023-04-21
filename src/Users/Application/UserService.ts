@@ -42,5 +42,8 @@ export class UserService {
   }
 
   haveCompanyPermission(user: User, companyName: string): boolean {
-    return user.companiesPermissions.some(permission => permission.toLowerCase() === companyName.toLowerCase());  }
+    return user.companiesPermissions.some(
+      (permission) => permission.toLowerCase() === companyName.toLowerCase()
+    );
+  }
 }

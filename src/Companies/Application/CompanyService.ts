@@ -5,13 +5,15 @@ export class CompanyService {
   constructor(private companyRepository: CompanyRepository) {}
 
   async findByName(companyName: string): Promise<Company | null> {
-    const company = await this.companyRepository.findByName(companyName);
-    return company;
+    return await this.companyRepository.findByName(companyName);
   }
 
   async createByName(companyName: string): Promise<Company | null> {
-    const company = await this.companyRepository.createByName(companyName);
-    return company;
+    return await this.companyRepository.createByName(companyName);
+  }
+
+  async createCompany(company: Company): Promise<Company | null> {
+    return await this.companyRepository.createCompany(company);
   }
 
   async createMetric(
@@ -19,11 +21,10 @@ export class CompanyService {
     metricName: string,
     description: string
   ): Promise<Metric | null> {
-    const company = await this.companyRepository.createMetric(
+    return await this.companyRepository.createMetric(
       companyName,
       metricName,
       description
     );
-    return company;
   }
 }

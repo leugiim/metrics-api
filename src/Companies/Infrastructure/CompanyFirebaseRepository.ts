@@ -46,7 +46,7 @@ export class CompanyFirebaseRepository implements CompanyRepository {
 
   async createByName(companyName: string): Promise<Company | null> {
     const companyNameId = companyName.toLowerCase();
-    
+
     const companiesCollection = collection(this.firestore, companyNameId);
     const companyDocs = await getDocs(companiesCollection);
 
@@ -56,6 +56,33 @@ export class CompanyFirebaseRepository implements CompanyRepository {
     await setDoc(doc(this.firestore, companyNameId, "name"), {
       name: companyName,
     });
+    return company;
+  }
+
+  async createCompany(company: Company): Promise<Company | null> {
+    const companyNameId = company.name.toLowerCase();
+
+    const companiesCollection = collection(this.firestore, companyNameId);
+    const companyDocs = await getDocs(companiesCollection);
+
+    if (companyDocs.empty) {
+      await setDoc(doc(this.firestore, companyNameId, "name"), {
+        name: company.name,
+      });
+    }
+
+    const metricName = Object.keys(company.metrics)[0];
+    const metricNameId = metricName.toLowerCase();
+    const metrics = company.metrics[metricName];
+
+    await setDoc(doc(this.firestore, companyNameId, metricNameId), {
+      name: metricName,
+      metrics: metrics.map((metric) => ({
+        date: Timestamp.fromDate(metric.date),
+        description: metric.description,
+      })),
+    });
+
     return company;
   }
 

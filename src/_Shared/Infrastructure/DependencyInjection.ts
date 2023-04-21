@@ -8,6 +8,7 @@ import { CompanyController } from "../../Companies/Infrastructure/CompanyControl
 import { UserFirebaseRepository } from "../../Users/Infrastructure/UserFirebaseRepository";
 import { VersionController } from "../../Version/Infrastructure/VersionController";
 import { UserController } from "../../Users/Infrastructure/UserController";
+import { InsertScriptController } from "./InsertScriptController";
 
 /** Users */
 export const userRepository: UserRepository = new UserFirebaseRepository();
@@ -28,3 +29,6 @@ export const companyController: CompanyController = new CompanyController(
 
 /** Version */
 export const versionController: VersionController = new VersionController();
+
+/** Insert script */
+export const insertScriptController: InsertScriptController = new InsertScriptController(companyService, userService);
