@@ -8,4 +8,9 @@ export class CompanyService {
     const company = await this.companyRepository.findByName(name);
     return company;
   }
+
+  async createByName(name: string): Promise<Company | null> {
+    const company = await this.companyRepository.createByName(name);
+    return company;
+  }
 }

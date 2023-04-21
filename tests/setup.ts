@@ -4,7 +4,7 @@ import app, { server } from "../src";
 beforeAll(() => {});
 
 afterAll(async () => {
-    await server.close();
-  });
+  await server.close();
+});
 
 export const request = supertest(app);

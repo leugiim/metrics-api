@@ -12,6 +12,7 @@ export const JWT_SECRET = process.env.JWT_SECRET;
 declare global {
   namespace Express {
     interface Request {
+      username?: string;
       user?: User;
     }
   }
@@ -39,25 +40,33 @@ export const loginAuth = async (req: Request, res: Response) => {
       return res.status(response.getHttpStatus()).json(response);
     }
 
-    const token = jwt.sign(user, JWT_SECRET, { expiresIn: "24h" });
+    const token = jwt.sign({ username }, JWT_SECRET, { expiresIn: 86400 });
 
     const response = new ResponseApi();
     response.setContent(token);
     return res.status(response.getHttpStatus()).json(response);
   } catch (error) {
+    console.error(error);
     return responseError(res);
   }
 };
 
 // Middleware to check if user is authenticated
-export const isLoged = (req: Request, res: Response, next: NextFunction) => {
+export const isLoged = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const token = req.headers.authorization?.split(" ")[1];
 
   if (!token) return responseUnauthorized(res);
 
   try {
-    const decodedToken = jwt.verify(token, JWT_SECRET) as User;
-    req.user = decodedToken;
+    const { username } = jwt.verify(token, JWT_SECRET) as { username: string };
+    req.username = username;
+    console.log(req.username);
+    req.user = await userService.findByUsername(req.username);
+    if (!req.user) return responseUnauthorized(res, "User not found");
     next();
   } catch (error) {
     return responseUnauthorized(res, "Invalid token");
@@ -69,7 +78,8 @@ export const haveRole =
   (permission: Permission) =>
   (req: Request, res: Response, next: NextFunction) => {
     const haveRole = userService.haveRolePermission(req.user, permission);
-    if (!haveRole) return responseUnauthorized(res, "You can not access to this resource");
+    if (!haveRole)
+      return responseUnauthorized(res, "You can not access to this resource");
 
     next();
   };
@@ -81,8 +91,12 @@ export const haveCompanyPermission = (
   next: NextFunction
 ) => {
   const companyName = req.params.name;
-  const havePermission = userService.haveCompanyPermission(req.user, companyName);
-  if (!havePermission) return responseUnauthorized(res, "You can not access to this company");
+  const havePermission = userService.haveCompanyPermission(
+    req.user,
+    companyName
+  );
+  if (!havePermission)
+    return responseUnauthorized(res, "You can not access to this company");
 
   next();
 };

@@ -2,7 +2,13 @@ import { User } from "../Domain/User";
 import { UserRepository } from "../Domain/UserRepository";
 import { firebaseConfig } from "../../_Shared/Infrastructure/Firebase";
 import { initializeApp } from "firebase/app";
-import { getFirestore, collection, doc, getDoc } from "firebase/firestore/lite";
+import {
+  getFirestore,
+  collection,
+  doc,
+  getDoc,
+  updateDoc,
+} from "firebase/firestore/lite";
 
 export class UserFirebaseRepository implements UserRepository {
   private firebase = initializeApp(firebaseConfig);
@@ -18,5 +24,16 @@ export class UserFirebaseRepository implements UserRepository {
     } else {
       return null;
     }
+  }
+
+  async addCompanyPermission(user: User, companyName: string): Promise<User> {
+    user.companiesPermissions.push(companyName);
+
+    const userRef = doc(this.usersCollection, user.username);
+    await updateDoc(userRef, {
+      companiesPermissions: user.companiesPermissions,
+    });
+
+    return await this.findByUsername(user.username);
   }
 }

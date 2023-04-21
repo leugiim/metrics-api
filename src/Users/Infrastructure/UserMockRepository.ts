@@ -14,9 +14,14 @@ export class UserMockRepository implements UserRepository {
           canWriteMetrics: false,
         },
         companiesPermissions: [],
-      }
+      },
     ];
 
     return users.find((user) => user.username === username) ?? null;
+  }
+
+  async addCompanyPermission(user: User, companyName: string): Promise<User> {
+    user.companiesPermissions.push(companyName);
+    return user;
   }
 }

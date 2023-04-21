@@ -1,20 +1,53 @@
-import { Company } from "../Domain/Company";
+import { Company, Metric } from "../Domain/Company";
 import { CompanyRepository } from "../Domain/CompanyRepository";
 import { firebaseConfig } from "../../_Shared/Infrastructure/Firebase";
 import { initializeApp } from "firebase/app";
-import { getFirestore, collection, doc, getDoc } from "firebase/firestore/lite";
+import {
+  getFirestore,
+  collection,
+  getDocs,
+  addDoc,
+  doc,
+  setDoc,
+  deleteDoc,
+} from "firebase/firestore/lite";
+import { date } from "zod";
 
 export class CompanyFirebaseRepository implements CompanyRepository {
   private firebase = initializeApp(firebaseConfig);
   private firestore = getFirestore(this.firebase);
-  private companiesCollection = collection(this.firestore, "companies");
 
   async findByName(name: string): Promise<Company | null> {
-    const queryResult = doc(this.companiesCollection, name);
-    const companyDoc = await getDoc(queryResult);
+    const companiesCollection = collection(this.firestore, name);
+    const companyDocs = await getDocs(companiesCollection);
 
-    if (companyDoc.exists()) {
-      return { name, metrics: { ...companyDoc.data() } } as Company;
+    if (!companyDocs.empty) {
+      const company: Company = { name, metrics: {} };
+
+      companyDocs.forEach((doc) => {
+        if (doc.id === "name") return;
+        company.metrics[doc.id] = (doc.data()?.metrics ?? []).map((metric) => ({
+          date: metric.date.toDate(),
+          value: metric.value,
+        })) as Metric[];
+      });
+
+      return company;
+    } else {
+      return null;
+    }
+  }
+
+  async createByName(name: string): Promise<Company | null> {
+    const companiesCollection = collection(this.firestore, name);
+    const companyDocs = await getDocs(companiesCollection);
+
+    if (companyDocs.empty) {
+      const company: Company = { name, metrics: {} };
+
+      await setDoc(doc(this.firestore, name, "name"), { name });
+
+      return company;
     } else {
       return null;
     }
