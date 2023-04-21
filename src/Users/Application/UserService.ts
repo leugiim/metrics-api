@@ -1,4 +1,3 @@
-import { Company } from "../../Company/Domain/Company";
 import { Permission, User } from "../Domain/User";
 import { UserRepository } from "../Domain/UserRepository";
 

@@ -1,10 +1,10 @@
-import { CompanyService } from "../../Company/Application/CompanyService";
-import { CompanyRepository } from "../../Company/Domain/CompanyRepository";
-import { CompanyFirebaseRepository } from "../../Company/Infrastructure/CompanyFirebaseRepository";
+import { CompanyService } from "../../Companies/Application/CompanyService";
+import { CompanyRepository } from "../../Companies/Domain/CompanyRepository";
+import { CompanyFirebaseRepository } from "../../Companies/Infrastructure/CompanyFirebaseRepository";
 import { UserService } from "../../Users/Application/UserService";
 import { UserRepository } from "../../Users/Domain/UserRepository";
 import { AuthController } from "../../Users/Infrastructure/AuthController";
-import { CompanyController } from "../../Company/Infrastructure/CompanyController";
+import { CompanyController } from "../../Companies/Infrastructure/CompanyController";
 import { UserFirebaseRepository } from "../../Users/Infrastructure/UserFirebaseRepository";
 import { VersionController } from "../../Version/Infrastructure/VersionController";
 import { UserController } from "../../Users/Infrastructure/UserController";
