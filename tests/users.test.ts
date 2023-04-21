@@ -14,7 +14,7 @@ beforeEach(() => {
 
 describe("UserService", () => {
   describe("findByUsername", () => {
-    it("should return a user object", async () => {
+    it("should return a user object if exists", async () => {
       const user = await userService.findByUsername(RIGHT_USER);
 
       expect(user).toBeDefined();
@@ -161,6 +161,14 @@ describe("UserService", () => {
       const havePermission = userService.haveCompanyPermission(user, "company");
 
       expect(havePermission).toBe(false);
+    });
+    it("should return true if use a user who can access to company case insensitive", async () => {
+      const user = await userService.findByUsername(RIGHT_USER);
+
+      user.companiesPermissions = ["COMpany"];
+      const havePermission = userService.haveCompanyPermission(user, "compaNY");
+
+      expect(havePermission).toBe(true);
     });
   });
 });

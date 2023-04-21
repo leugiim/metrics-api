@@ -20,40 +20,43 @@ export class CompanyFirebaseRepository implements CompanyRepository {
   private firebase = initializeApp(firebaseConfig);
   private firestore = getFirestore(this.firebase);
 
-  async findByName(name: string): Promise<Company | null> {
-    const companiesCollection = collection(this.firestore, name);
+  async findByName(companyName: string): Promise<Company | null> {
+    const companyNameId = companyName.toLowerCase();
+
+    const companiesCollection = collection(this.firestore, companyNameId);
     const companyDocs = await getDocs(companiesCollection);
 
-    if (!companyDocs.empty) {
-      const company: Company = { name, metrics: {} };
+    if (companyDocs.empty) throw new Error("Company not found");
 
-      companyDocs.forEach((doc) => {
-        if (doc.id === "name") return;
+    const company: Company = { name: companyName, metrics: {} };
+
+    companyDocs.forEach((doc) => {
+      if (doc.id === "name") {
+        company.name = doc.data()?.name ?? companyName;
+      } else {
         company.metrics[doc.id] = (doc.data()?.metrics ?? []).map((metric) => ({
           date: metric.date.toDate(),
           description: metric.description,
         })) as Metric[];
-      });
+      }
+    });
 
-      return company;
-    } else {
-      return null;
-    }
+    return company;
   }
 
-  async createByName(name: string): Promise<Company | null> {
-    const companiesCollection = collection(this.firestore, name);
+  async createByName(companyName: string): Promise<Company | null> {
+    const companyNameId = companyName.toLowerCase();
+    
+    const companiesCollection = collection(this.firestore, companyNameId);
     const companyDocs = await getDocs(companiesCollection);
 
-    if (companyDocs.empty) {
-      const company: Company = { name, metrics: {} };
+    if (!companyDocs.empty) throw new Error("Company already exists");
 
-      await setDoc(doc(this.firestore, name, "name"), { name });
-
-      return company;
-    } else {
-      return null;
-    }
+    const company: Company = { name: companyName, metrics: {} };
+    await setDoc(doc(this.firestore, companyNameId, "name"), {
+      name: companyName,
+    });
+    return company;
   }
 
   async createMetric(
@@ -61,23 +64,27 @@ export class CompanyFirebaseRepository implements CompanyRepository {
     metricName: string,
     description: string
   ): Promise<Metric | null> {
-    const companiesCollection = collection(this.firestore, companyName);
-    const metricDocRef = doc(companiesCollection, metricName);
+    const companyNameId = companyName.toLowerCase();
+    const metricNameId = metricName.toLowerCase();
+
+    const companiesCollection = collection(this.firestore, companyNameId);
+    const metricDocRef = doc(companiesCollection, metricNameId);
     const metricDoc = await getDoc(metricDocRef);
     const date = Timestamp.now();
+    const metric: Metric = { date: date.toDate(), description };
 
     if (!metricDoc.exists()) {
-      await setDoc(metricDocRef, { metrics: [{ date, description }] });
-      const metric: Metric = { date: date.toDate(), description };
-      return metric;
+      await setDoc(metricDocRef, {
+        name: metricName,
+        metrics: [{ date, description }],
+      });
     } else {
       const metricData = metricDoc.data();
       const metrics = metricData?.metrics ?? [];
 
       metrics.push({ date, description });
       await updateDoc(metricDocRef, { metrics });
-      const metric: Metric = { date: date.toDate(), description };
-      return metric;
     }
+    return metric;
   }
 }

@@ -116,8 +116,6 @@ export class CompanyController {
       if (!companyName) throw new Error("Company name is required");
 
       const company = await this.companyService.createByName(companyName);
-      if (!company) throw new Error("Company already exists");
-
       await this.userService.addCompanyPermission(req.username, company.name);
 
       response.setContent(company);
