@@ -64,7 +64,6 @@ export const isLoged = async (
   try {
     const { username } = jwt.verify(token, JWT_SECRET) as { username: string };
     req.username = username;
-    console.log(req.username);
     req.user = await userService.findByUsername(req.username);
     if (!req.user) return responseUnauthorized(res, "User not found");
     next();
