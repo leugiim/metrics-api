@@ -68,8 +68,8 @@ export const isLoged = (req: Request, res: Response, next: NextFunction) => {
 export const haveRole =
   (permission: Permission) =>
   (req: Request, res: Response, next: NextFunction) => {
-    if (userService.haveRolePermission(req.user, permission))
-      return responseUnauthorized(res, "You can not access to this resource");
+    const haveRole = userService.haveRolePermission(req.user, permission);
+    if (!haveRole) return responseUnauthorized(res, "You can not access to this resource");
 
     next();
   };
@@ -80,9 +80,9 @@ export const haveCompanyPermission = (
   res: Response,
   next: NextFunction
 ) => {
-  let companyName = req.params.name;
-  if (userService.haveCompanyPermission(req.user, companyName))
-    return responseUnauthorized(res, "You can not access to this company");
+  const companyName = req.params.name;
+  const havePermission = userService.haveCompanyPermission(req.user, companyName);
+  if (!havePermission) return responseUnauthorized(res, "You can not access to this company");
 
   next();
 };
