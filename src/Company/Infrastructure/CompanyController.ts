@@ -1,6 +1,6 @@
 import { Router, Request, Response } from "express";
 import { ResponseApi } from "../../_Shared/Domain/ResponseApi";
-import type { Company } from "../Domain/Company";
+import type { Company, Metric } from "../Domain/Company";
 import {
   isLoged,
   haveRole,
@@ -31,6 +31,14 @@ export class CompanyController {
       isLoged,
       haveRole(Permission.CAN_WRITE_COMPANIES),
       this.createCompany.bind(this)
+    );
+
+    this.router.put(
+      "/:name",
+      isLoged,
+      haveRole(Permission.CAN_WRITE_METRICS),
+      haveCompanyPermission,
+      this.createMetric.bind(this)
     );
   }
 
@@ -113,6 +121,68 @@ export class CompanyController {
       await this.userService.addCompanyPermission(req.username, company.name);
 
       response.setContent(company);
+    } catch (ex) {
+      response.setError(ex);
+    }
+
+    return res.status(response.getHttpStatus()).json(response);
+  };
+
+  /**
+   * @swagger
+   * /company/{name}:
+   *   put:
+   *     summary: Create metric
+   *     description: Create metric in company by description
+   *     parameters:
+   *      - in: path
+   *        name: name
+   *        schema:
+   *          type: string
+   *        required: true
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/x-www-form-urlencoded:
+   *           schema:
+   *             type: object
+   *             properties:
+   *               metricName:
+   *                 type: string
+   *               description:
+   *                 type: string
+   *             required:
+   *               - metricName
+   *               - description
+   *     security:
+   *      - bearerAuth: []
+   *     tags:
+   *      - company
+   *     responses:
+   *       '200':
+   *         description: OK
+   *       '401':
+   *         description: Unauthorized
+   *       '500':
+   *         description: Internal Server Error
+   */
+  createMetric = async (req: Request, res: Response) => {
+    const response = new ResponseApi<Metric>();
+
+    try {
+      let companyName = req.params.name;
+      let metricName = req.body.metricName;
+      if (!metricName) throw new Error("Metric name is required");
+      let description = req.body.description;
+      if (!description) throw new Error("Description is required");
+
+      const metric = await this.companyService.createMetric(
+        companyName,
+        metricName,
+        description
+      );
+
+      response.setContent(metric);
     } catch (ex) {
       response.setError(ex);
     }

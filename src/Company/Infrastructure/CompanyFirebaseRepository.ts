@@ -10,6 +10,9 @@ import {
   doc,
   setDoc,
   deleteDoc,
+  getDoc,
+  Timestamp,
+  updateDoc,
 } from "firebase/firestore/lite";
 import { date } from "zod";
 
@@ -28,7 +31,7 @@ export class CompanyFirebaseRepository implements CompanyRepository {
         if (doc.id === "name") return;
         company.metrics[doc.id] = (doc.data()?.metrics ?? []).map((metric) => ({
           date: metric.date.toDate(),
-          value: metric.value,
+          description: metric.description,
         })) as Metric[];
       });
 
@@ -50,6 +53,31 @@ export class CompanyFirebaseRepository implements CompanyRepository {
       return company;
     } else {
       return null;
+    }
+  }
+
+  async createMetric(
+    companyName: string,
+    metricName: string,
+    description: string
+  ): Promise<Metric | null> {
+    const companiesCollection = collection(this.firestore, companyName);
+    const metricDocRef = doc(companiesCollection, metricName);
+    const metricDoc = await getDoc(metricDocRef);
+    const date = Timestamp.now();
+
+    if (!metricDoc.exists()) {
+      await setDoc(metricDocRef, { metrics: [{ date, description }] });
+      const metric: Metric = { date: date.toDate(), description };
+      return metric;
+    } else {
+      const metricData = metricDoc.data();
+      const metrics = metricData?.metrics ?? [];
+
+      metrics.push({ date, description });
+      await updateDoc(metricDocRef, { metrics });
+      const metric: Metric = { date: date.toDate(), description };
+      return metric;
     }
   }
 }

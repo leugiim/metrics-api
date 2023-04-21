@@ -5,5 +5,5 @@ export interface Company {
 
 export interface Metric {
   date: Date;
-  value: string;
+  description: string;
 }
