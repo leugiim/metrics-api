@@ -16,20 +16,22 @@ export class UserFirebaseRepository implements UserRepository {
   private usersCollection = collection(this.firestore, "users");
 
   async findByUsername(username: string): Promise<User | null> {
-    const queryResult = doc(this.usersCollection, username);
+    const userId = username.toLowerCase();
+    
+    const queryResult = doc(this.usersCollection, userId);
     const userDoc = await getDoc(queryResult);
 
-    if (userDoc.exists()) {
-      return { username, ...userDoc.data() } as User;
-    } else {
-      return null;
-    }
+    if (!userDoc.exists()) return null;
+
+    return userDoc.data() as User;
   }
 
   async addCompanyPermission(user: User, companyName: string): Promise<User> {
+    const userId = user.username.toLowerCase();
+
     user.companiesPermissions.push(companyName);
 
-    const userRef = doc(this.usersCollection, user.username);
+    const userRef = doc(this.usersCollection, userId);
     await updateDoc(userRef, {
       companiesPermissions: user.companiesPermissions,
     });
