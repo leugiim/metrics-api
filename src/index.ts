@@ -36,6 +36,7 @@ app.use("/auth", authController.router);
 app.use("/user", userController.router);
 app.use("/company", companyController.router);
 app.use("/version", versionController.router);
+app.use("/health", versionController.router);
 app.use("/script", insertScriptController.router);
 
 export const server = app.listen(process.env.PORT ?? 3000, () => {
