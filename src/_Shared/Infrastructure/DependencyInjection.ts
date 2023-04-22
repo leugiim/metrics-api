@@ -31,4 +31,5 @@ export const companyController: CompanyController = new CompanyController(
 export const versionController: VersionController = new VersionController();
 
 /** Insert script */
-export const insertScriptController: InsertScriptController = new InsertScriptController(companyService, userService);
+export const insertScriptController: InsertScriptController =
+  new InsertScriptController(companyService, userService);

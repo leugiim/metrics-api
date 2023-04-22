@@ -70,7 +70,7 @@ export class CompanyController {
     const response = new ResponseApi<Company>();
 
     try {
-      let companyName = req.params.name;
+      let companyName = decodeURIComponent(req.params.name);
       response.setContent(await this.companyService.findByName(companyName));
     } catch (ex) {
       response.setError(ex);
@@ -168,7 +168,7 @@ export class CompanyController {
     const response = new ResponseApi<Metric>();
 
     try {
-      let companyName = req.params.name;
+      let companyName = decodeURIComponent(req.params.name);
       let metricName = req.body.metricName;
       if (!metricName) throw new Error("Metric name is required");
       let description = req.body.description;

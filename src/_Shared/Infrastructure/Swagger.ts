@@ -22,6 +22,10 @@ export const useSwagger = () => {
       ],
       components: {
         securitySchemes: {
+          basicAuth: {
+            type: "http",
+            scheme: "basic",
+          },
           bearerAuth: {
             type: "http",
             scheme: "bearer",

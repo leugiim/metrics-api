@@ -8,29 +8,17 @@ export class AuthController {
   public router = Router();
 
   constructor(private userService: UserService) {
-    this.router.post("/", loginAuth, this.login.bind(this));
+    this.router.get("/", loginAuth, this.login.bind(this));
   }
 
   /**
    * @swagger
    * /auth:
-   *   post:
+   *   get:
    *     summary: Login
    *     description: Login user by username and password
-   *     requestBody:
-   *       required: true
-   *       content:
-   *         application/x-www-form-urlencoded:
-   *           schema:
-   *             type: object
-   *             properties:
-   *               username:
-   *                 type: string
-   *               password:
-   *                 type: string
-   *             required:
-   *               - username
-   *               - password
+   *     security:
+   *      - basicAuth: []
    *     tags:
    *      - auth
    *     responses:

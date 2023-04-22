@@ -31,7 +31,10 @@ const responseUnauthorized = (res: Response, message: string = null) => {
 
 export const loginAuth = async (req: Request, res: Response) => {
   try {
-    const { username, password } = req.body;
+    const basicToken = req.headers.authorization?.split(" ")[1];
+    const decodedString = Buffer.from(basicToken, "base64").toString();
+    const [username, password] = decodedString.split(":");
+
     const user: User = await userService.login(username, password);
 
     if (!user) {
@@ -89,7 +92,7 @@ export const haveCompanyPermission = (
   res: Response,
   next: NextFunction
 ) => {
-  const companyName = req.params.name;
+  const companyName = decodeURIComponent(req.params.name);
   const havePermission = userService.haveCompanyPermission(
     req.user,
     companyName

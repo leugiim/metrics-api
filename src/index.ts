@@ -9,7 +9,7 @@ import {
   companyController,
   userController,
   versionController,
-  insertScriptController
+  insertScriptController,
 } from "./_Shared/Infrastructure/DependencyInjection";
 import { JWT_SECRET } from "./_Shared/Infrastructure/Auth";
 
