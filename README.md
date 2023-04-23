@@ -48,7 +48,7 @@ The documentation for the API can be found at [/docs](http://localhost:3000/docs
 
 [http://localhost:3000/docs](http://localhost:3000/docs)
 
-Replace <port> with the port number on which the development server is running.
+Replace port with the port number on which the development server is running.
 
 ## Future Improvements
 
