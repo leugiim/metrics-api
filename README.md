@@ -1,6 +1,10 @@
-# metrics-api
+# Metrics-API
 
 ---
+
+## Project Overview
+
+**Metrics-API** is an application for business metrics tracking and analysis. The application has an API that allows to retrieve and manipulate data from companies and metrics. Data is stored in a Firestore database. The application is built with Node.js and Express, using TypeScript, and is documented with Swagger. The frontend part is developed with Sveltekit.
 
 ## Installation
 
@@ -18,6 +22,7 @@ It is necessary to create a file called **.env** that contains the necessary con
 
 - **URL**
 - **PORT**
+- **SWAGGER_PORT**
 - **JWT_SECRET**
 - **FIREBASE_API_KEY**
 - **FIREBASE_AUTH_DOMAIN**
@@ -35,7 +40,7 @@ Once the dependencies are installed, you can run the project in development mode
 npm run dev
 ```
 
-When you run this command, the development server will start on the port specified in the configuration file in the **.env** file or on port 3000 by default.
+When you run this command, the development server will start on the port specified in the **.env** file or on port 3000 by default.
 
 ## Documentation
 
@@ -44,3 +49,14 @@ The documentation for the API can be found at [/docs](http://localhost:3000/docs
 [http://localhost:3000/docs](http://localhost:3000/docs)
 
 Replace <port> with the port number on which the development server is running.
+
+## Future Improvements
+
+- **Encrypting passwords:** Currently, passwords are not encrypted as this was a project for an interview and I wanted to be able to easily modify passwords for testing purposes without having to constantly hash them.
+- **Adding metric type:** Adding metric type (errors, warnings, info, etc.) would allow for different colors to be displayed on the front-end and allow filtering by type.
+- **Caching company data results:** Currently, all metrics are obtained at once, so it would be beneficial to implement a cron job or similar mechanism to pre-calculate graphs that are displayed on the front-end.
+- **Implementing real-time data updates.**
+- **Adding change password functionality.**
+- **Adding password recovery functionality:** Sending an email to the client to verify their identity.
+- **Improving test coverage:** Due to time constraints and the need to mock data, not all of the application has been covered by tests.
+- **Adding end-to-end tests.**
