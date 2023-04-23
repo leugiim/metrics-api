@@ -6,6 +6,9 @@
 
 **Metrics-API** is an application for business metrics tracking and analysis. The application has an API that allows to retrieve and manipulate data from companies and metrics. Data is stored in a Firestore database. The application is built with Node.js and Express, using TypeScript, and is documented with Swagger. The frontend part is developed with Sveltekit.
 
+The Github url for the Frontend app is: [https://github.com/leugiim/metrics-app](https://github.com/leugiim/metrics-app)
+
+
 ## Installation
 
 To install the project dependencies, run the following command:
