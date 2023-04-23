@@ -12,7 +12,7 @@ export const useSwagger = () => {
       info: { title, version },
       servers: [
         {
-          url: `${process.env.URL}:${process.env.PORT}`,
+          url: `${process.env.URL}:${process.env.SWAGGER_PORT}`,
         },
       ],
       security: [
